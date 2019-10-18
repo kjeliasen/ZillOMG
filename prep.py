@@ -10,7 +10,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 import pandas as pd
 # import seaborn as sns
-import acquire
+from aquire import wrangle_zillow, get_sql, get_db_url
 
 
 ###############################################################################
@@ -26,7 +26,7 @@ def get_gross_df(db='zillow', sql='zillow_sql', sql_string=False):
     Pulls gross dataset from source database.
     '''
     
-    gross_df = acquire.wrangle_zillow(db=db, sql=sql, sql_string=sql_string)
+    gross_df = wrangle_zillow(db=db, sql=sql, sql_string=sql_string)
     return gross_df
 
 

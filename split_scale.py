@@ -1,34 +1,29 @@
+###############################################################################
+### python imports                                                          ###
+###############################################################################
+
 import warnings
 warnings.filterwarnings("ignore")
-
 import pandas as pd
 import numpy as np
-import math
-
-import acquire
-import prep
-
+# from math import sqrt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTransformer, RobustScaler, MinMaxScaler
 
 
-# Create split_scale.py that will contain the functions that follow. Each 
-# scaler function should create the object, fit and transform both train and 
-# test. They should return the scaler, train df scaled, test df scaled. Be 
-# sure your indices represent the original indices from train/test, as those 
-# represent the indices from the original dataframe. Be sure to set a random 
-# state where applicable for reproducibility!
+###############################################################################
+### local imports                                                           ###
+###############################################################################
 
-# split_my_data(X, y, train_pct)
-# standard_scaler()
-# scale_inverse()
-# uniform_scaler()
-# gaussian_scaler()
-# min_max_scaler()
-# iqr_robust_scaler()
+from aquire import wrangle_zillow, get_sql, get_db_url
+from prep import get_base_df, get_gross_df, rename_fields
+
+
+###############################################################################
+### generic scaling functions                                               ###
+###############################################################################
 
 ### Test Train Split ##########################################################
-
 # train, test = train_test_split(df, train_size = .80, random_state = 123)
 def split_my_data_xy(df, target_column, train_pct=.75, random_state=None):
     X = df.drop([target_column], axis=1)
@@ -106,3 +101,9 @@ def iqr_robust_scaler(train, test):
     train_scaled, test_scaled = scalem(scaler=scaler, test=test, train=train)
     return scaler, train_scaled, test_scaled
 
+
+###############################################################################
+### project-specific scaling functions                                      ###
+###############################################################################
+
+get_
