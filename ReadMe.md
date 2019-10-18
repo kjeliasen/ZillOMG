@@ -84,7 +84,7 @@ You must evaluate a baseline model, and show how the model you end up with perfo
 
 Your notebook will contain various algorithms and/or hyperparameters tried, along with the evaluation code and results, before settling on the final algorithm.
 
-Be sure and evaluate your model using the standard techniques: plotting the residuals, computing the evaluation metric (SSE, RMSE, and/or MSE), comparing to baseline, plotting $$y$$ by <y&#770>.
+Be sure and evaluate your model using the standard techniques: plotting the residuals, computing the evaluation metric (SSE, RMSE, and/or MSE), comparing to baseline, plotting <img src="https://latex.codecogs.com/gif.latex?\hat{y}" title="y" /> by <img src="https://latex.codecogs.com/gif.latex?\hat{y}" title="\hat{y}" />.
 
 For some regression options see [sklearn linear models](https://scikit-learn.org/stable/modules/linear_model.html). 
 
