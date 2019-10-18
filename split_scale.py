@@ -6,6 +6,8 @@ import warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 # from math import sqrt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTransformer, RobustScaler, MinMaxScaler
@@ -15,7 +17,7 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTran
 ### local imports                                                           ###
 ###############################################################################
 
-from aquire import wrangle_zillow, get_sql, get_db_url
+from prep import wrangle_zillow, get_sql, get_db_url
 from prep import get_base_df, get_gross_df, rename_fields
 
 
@@ -106,4 +108,58 @@ def iqr_robust_scaler(train, test):
 ### project-specific scaling functions                                      ###
 ###############################################################################
 
-get_
+
+def xy_df(dataframe, y_column):
+    '''
+    FUNCTION
+    RETURNS:
+    '''
+
+    X_df = dataframe.drop([y_column], axis=1)
+    y_df = pd.DataFrame(dataframe[y_column])
+    return X_df, y_df
+
+
+def split_scaled_dfs(target_df=get_base_df(), y_column='taxvaluedollarcnt', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
+    '''
+    scale_df(target_df=get_base_df(), y_column='taxvaluedollarcnt', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
+    RETURNS: X_train, X_train_scaled, X_test, X_test_scaled, y_train, y_train_scaled, y_test, y_test_scaled, scaler
+
+    scaler_fn must be a function
+    dummy val added to train and test to allow for later feature selection testing
+
+    '''
+    df_dict = {}
+    train, test = split_my_data(df=target_df, random_state=randomer)
+    df_dict['scaler'], train_scaled, test_scaled = scaler_fn(train=train, test=test)
+    train['dummy_val']=1
+    train_scaled['dummy_val']=1
+    df_dict['X_train'], df_dict['y_train'] = xy_df(dataframe=train, y_column=y_column)
+    df_dict['X_test'], df_dict['y_test'] = xy_df(dataframe=test, y_column=y_column)
+    df_dict['X_train_scaled'], df_dict['y_train_scaled'] = xy_df(dataframe=train_scaled, y_column=y_column)
+    df_dict['X_test_scaled'], df_dict['y_test_scaled'] = xy_df(dataframe=test_scaled, y_column=y_column)
+    return df_dict
+
+
+def pairplot_train(X, y):
+    '''
+    FUNCTION
+    RETURNS:
+    '''
+    train_plot = X.join(y)
+    sns.pairplot(train_plot)
+    plt.show()
+
+
+def heatmap_train(X, y):
+    '''
+    FUNCTION
+    RETURNS:
+    '''
+    train_plot = X.join(y)
+    plt.figure(figsize=(7,5))
+    cor = train_plot.corr()
+    sns.heatmap(cor, annot=True, cmap=plt.cm.RdBu_r)
+    plt.show()
+
+

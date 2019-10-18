@@ -10,7 +10,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 import pandas as pd
 # import seaborn as sns
-from aquire import wrangle_zillow, get_sql, get_db_url
+from acquire import wrangle_zillow, get_sql, get_db_url
 
 
 ###############################################################################

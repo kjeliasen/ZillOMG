@@ -167,3 +167,8 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
 
     return result_df    
 
+
+def frame_splain(df, title, topx=5):
+    df_shape = df.shape
+    df_describe = df.describe()
+    df_head = df.head(topx)
