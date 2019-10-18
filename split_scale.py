@@ -6,7 +6,7 @@ import numpy as np
 import math
 
 import acquire
-import env
+import prep
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTransformer, RobustScaler, MinMaxScaler
@@ -51,15 +51,6 @@ def scalem(scaler, test, train):
     return train_scaled, test_scaled
 
 
-def standard_scaler(train, test):
-    # create object & fit
-    scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
-    # scale'm
-    train_scaled, test_scaled = scalem(scaler=scaler, test=test, train=train)
-    return scaler, train_scaled, test_scaled
-
-
-
 def scale_inverse(train_scaled, test_scaled, scaler):
     # If we wanted to return to original values:
     # apply to train
@@ -67,6 +58,15 @@ def scale_inverse(train_scaled, test_scaled, scaler):
     # apply to test
     test_unscaled = pd.DataFrame(scaler.inverse_transform(test_scaled), columns=test_scaled.columns.values).set_index([test_scaled.index.values])
     return train_unscaled, test_unscaled
+
+
+### Standard Scaler ###########################################################
+def standard_scaler(train, test):
+    # create object & fit
+    scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
+    # scale'm
+    train_scaled, test_scaled = scalem(scaler=scaler, test=test, train=train)
+    return scaler, train_scaled, test_scaled
 
 
 ### Uniform Scaler ############################################################
