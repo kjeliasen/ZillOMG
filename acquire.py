@@ -2,7 +2,7 @@
 ### imports                                                                 ###
 ###############################################################################
 
-print('Getting Acquire', __name__)
+# print('Getting Acquire', __name__)
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -13,7 +13,12 @@ import numpy as np
 import pandas as pd
 # import seaborn as sns
 
+###############################################################################
+### local imports                                                           ###
+###############################################################################
+
 from env import host, user, password
+from debug import local_settings, timeifdebug
 
 
 
@@ -22,7 +27,8 @@ from env import host, user, password
 ###############################################################################
 
 
-print('get db url')
+# print('get db url')
+@timeifdebug
 def get_db_url(user, password, host, database):
     '''
     get_db_url(user=user, password=password, host=host, database='zillow')
@@ -35,7 +41,8 @@ def get_db_url(user, password, host, database):
 ### other functions                                                         ###
 ###############################################################################
 
-print('get sql')
+# print('get sql')
+@timeifdebug
 def get_sql(sql='zillow_sql'):
     '''
     get_sql(sql='zillow_sql')
@@ -47,7 +54,7 @@ def get_sql(sql='zillow_sql'):
     '''
     sqls = {
         # test_sql for quick test of environment
-        'test_sql': '',
+        'test_sql': 'test',
 
         # zillow_sql to pull gross_props
         'zillow_sql': '''
@@ -151,7 +158,8 @@ def get_sql(sql='zillow_sql'):
     return sqls[sql]
 
 
-print('wrangle zillow')
+# print('wrangle zillow')
+@timeifdebug
 def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     '''
     wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False)
@@ -172,12 +180,22 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     return result_df    
 
 
-print('frame splain')
-def frame_splain(df, title, topx=5):
+# print('frame splain')
+def frame_splain(df, title, topx=5, print_out=True):
     df_shape = df.shape
-    df_describe = df.describe()
-    df_head = df.head(topx)
+    max_x = max(topx, df_shape[1])
+    df_desc = df.describe()
+    df_head = df.head(max_x)
+    df_info = df.info()
+    if print_out:
+        print(title, 'shape:\n', df_shape, '\n')
+        print(title, 'description:\n', df_desc, '\n')
+        print(title, 'info:\n', df_info, '\n')
+        print(title, 'head:\n', df_head, '\n')
+        
 
 
 
-print('Got acquire')
+# print('Got acquire')
+
+# if __name__ = '__main__':

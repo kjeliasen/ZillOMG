@@ -2,7 +2,7 @@
 ### python imports                                                          ###
 ###############################################################################
 
-print('Getting Split_Scale', __name__)
+# print('Getting Split_Scale', __name__)
 
 
 import warnings
@@ -20,8 +20,8 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTran
 ### local imports                                                           ###
 ###############################################################################
 
-from prep import wrangle_zillow, get_sql, get_db_url
-from prep import get_base_df, get_gross_df, rename_fields
+# from prep import wrangle_zillow, get_sql, get_db_url
+# from prep import get_base_df, get_gross_df, rename_fields
 
 
 ###############################################################################
@@ -30,7 +30,9 @@ from prep import get_base_df, get_gross_df, rename_fields
 
 ### Test Train Split ##########################################################
 # train, test = train_test_split(df, train_size = .80, random_state = 123)
-print('split my data xy')
+
+# print('split my data xy')
+
 def split_my_data_xy(df, target_column, train_pct=.75, random_state=None):
     X = df.drop([target_column], axis=1)
     y = pd.DataFrame(df[target_column])
@@ -38,14 +40,16 @@ def split_my_data_xy(df, target_column, train_pct=.75, random_state=None):
     return X_train, X_test, y_train, y_test
 
 
-print('split my data')
+# print('split my data')
+
 def split_my_data(df, train_pct=.75, random_state=None):
     train, test = train_test_split(df, train_size=train_pct, random_state=random_state)
     return train, test
 
 
 ### Transform Data ############################################################
-print('scalem')
+# print('scalem')
+
 def scalem(scaler, test, train):
     # transform train
     train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
@@ -54,7 +58,8 @@ def scalem(scaler, test, train):
     return train_scaled, test_scaled
 
 
-print('scale inverse')
+# print('scale inverse')
+
 def scale_inverse(train_scaled, test_scaled, scaler):
     # If we wanted to return to original values:
     # apply to train
@@ -65,7 +70,8 @@ def scale_inverse(train_scaled, test_scaled, scaler):
 
 
 ### Standard Scaler ###########################################################
-print('standard scaler')
+# print('standard scaler')
+
 def standard_scaler(train, test):
     # create object & fit
     scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
@@ -75,7 +81,8 @@ def standard_scaler(train, test):
 
 
 ### Uniform Scaler ############################################################
-print('uniform scaler')
+# print('uniform scaler')
+
 def uniform_scaler(train, test):
     # create scaler object and fit to train
     scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(train)
@@ -85,7 +92,8 @@ def uniform_scaler(train, test):
 
 
 ### Gaussian (Normal) Scaler ##################################################
-print('guassian scaler')
+# print('guassian scaler')
+
 def gaussian_scaler(train, test):
     # create scaler object using yeo-johnson method and fit to train
     scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(train)
@@ -96,7 +104,8 @@ def gaussian_scaler(train, test):
 
 
 ### MinMax Scaler #############################################################
-print('min max scaler')
+# print('min max scaler')
+
 def min_max_scaler(train, test):
     # create scaler object and fit to train
     scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(train)
@@ -107,7 +116,8 @@ def min_max_scaler(train, test):
 
 
 ### Robust Scaler #############################################################
-print('iqr robust scaler')
+# print('iqr robust scaler')
+
 def iqr_robust_scaler(train, test):
     # create scaler object and fit to train
     scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(train)
@@ -120,7 +130,8 @@ def iqr_robust_scaler(train, test):
 ### project-specific scaling functions                                      ###
 ###############################################################################
 
-print('zy df')
+# print('zy df')
+
 def xy_df(dataframe, y_column):
     '''
     xy_df(dataframe, y_column)
@@ -135,7 +146,8 @@ def xy_df(dataframe, y_column):
     return X_df, y_df
 
 
-print('set context')
+# print('set context')
+
 def set_context(target_df, y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
     '''
     set_context(target_df=get_base_df(), y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
@@ -169,7 +181,7 @@ def df_join_xy(X, y):
     return X.join(y)
 
 
-print('pairplot train')
+# print('pairplot train')
 def pairplot_train(dataframe, show_now=True):
     '''
     FUNCTION
@@ -182,7 +194,8 @@ def pairplot_train(dataframe, show_now=True):
         return plot
 
 
-print('heatmap train')
+# print('heatmap train')
+
 def heatmap_train(dataframe, show_now=True):
     '''
     FUNCTION

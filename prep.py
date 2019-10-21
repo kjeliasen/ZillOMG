@@ -2,7 +2,7 @@
 ### imports                                                                 ###
 ###############################################################################
 
-print('Getting Prep', __name__)
+# print('Getting Prep', __name__)
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -12,12 +12,13 @@ import numpy as np
 # import matplotlib.pyplot as plt
 import pandas as pd
 # import seaborn as sns
-from acquire import wrangle_zillow, get_sql, get_db_url
+# from acquire import wrangle_zillow, get_sql, get_db_url
+from debug import local_settings, timeifdebug
 
 
 _global_renames = (
     ('parcelid', 'pid'),
-    ('bathroomcnt', 'nbr_bedrms'),
+    ('bathroomcnts', 'nbr_bedrms'),
     ('bedroomcnt', 'nbr_bthrms'),
     ('calculatedfinishedsquarefeet', 'finished_sqft'),
     ('taxvaluedollarcnt', 'taxable_value'),
@@ -29,22 +30,23 @@ _global_renames = (
 ###############################################################################
 
 
-print('get gross df')
-def get_gross_df(db='zillow', sql='zillow_sql', sql_string=False):
+# print('get gross df')
+
+def edit_gross_df(dataframe):
     '''
-    get_gross_df(db='zillow', sql='zillow_sql', sql_string=False)
+    get_acquire_df(db='zillow', sql='zillow_sql', sql_string=False)
     RETURNS dataframe
 
     Pulls gross dataset from source database. Fields will be renamed according to rules set in rename_fields()
     '''
-    orig_df = wrangle_zillow(db=db, sql=sql, sql_string=sql_string)
-    print(orig_df.info())
-    new_df = rename_fields(orig_df)
-    print(new_df.info())
-    return new_df
+    # print(orig_df.info())
+    return rename_fields(dataframe)
+    # print(new_df.info())
+    # return acquire_df
 
 
-print('rename fields')
+# print('rename fields')
+
 def rename_fields(dataframe):
     '''
     rename_fields(dataframe)
@@ -58,23 +60,22 @@ def rename_fields(dataframe):
     return new_df
 
 
-print('get base df')
-def get_base_df():
+# print('get base df')
+
+def edit_prep_df(dataframe):
     '''
-    set_base_df()
+    set_base_df(dataframe)
     RETURN base_df
 
     Gets basic dataframe for MVP objective. Features include bathrooms, 
     bedrooms, and square footage. Target variable is 'taxvaluedollarcnt'
-    
-    
     '''
+
     keep_fields = ['nbr_bthrms','nbr_bedrms','finished_sqft','taxable_value']
-    gross_df = get_gross_df()
-    print(gross_df.head())
-    base_df = gross_df[keep_fields] #.set_index('id')
+    # gross_df = get_gross_df()
+    prepped_df = dataframe[keep_fields] #.set_index('id')
 
-    return base_df
+    return prepped_df
 
 
-print('Got Prep')
+# print('Got Prep')
