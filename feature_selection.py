@@ -23,12 +23,13 @@ from statsmodels.formula.api import ols
 ### local imports                                                           ###
 ###############################################################################
 
-from split_scale import wrangle_zillow, get_sql, get_db_url
-from split_scale import get_base_df, get_gross_df, rename_fields
-from split_scale import xy_df, set_context, df_join_xy, pairplot_train, heatmap_train
-from split_scale import split_my_data_xy, split_my_data
-from split_scale import scalem, scale_inverse
-from split_scale import standard_scaler, uniform_scaler, gaussian_scaler, min_max_scaler, iqr_robust_scaler
+from debug import local_settings, timeifdebug, timeargsifdebug
+# from split_scale import wrangle_zillow, get_sql, get_db_url
+# from split_scale import get_base_df, get_gross_df, rename_fields
+# from split_scale import xy_df, set_context, df_join_xy, pairplot_train, heatmap_train
+# from split_scale import split_my_data_xy, split_my_data
+# from split_scale import scalem, scale_inverse
+# from split_scale import standard_scaler, uniform_scaler, gaussian_scaler, min_max_scaler, iqr_robust_scaler
 
 
 

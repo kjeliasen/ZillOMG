@@ -2,33 +2,23 @@
 ### imports                                                                 ###
 ###############################################################################
 
-# print('Getting Acquire', __name__)
-
 import warnings
 warnings.filterwarnings("ignore")
-
 import numpy as np
-# import viz
-# import matplotlib.pyplot as plt
 import pandas as pd
-# import seaborn as sns
 
 ###############################################################################
 ### local imports                                                           ###
 ###############################################################################
 
 from env import host, user, password
-from debug import local_settings, timeifdebug
-
-
+from debug import local_settings, timeifdebug, timeargsifdebug
 
 ###############################################################################
 ### get db url                                                              ###
 ###############################################################################
 
-
-# print('get db url')
-@timeifdebug
+@timeifdebug  # <--- DO NOT RUN ARGS DEBUG HERE! Will pass password info.
 def get_db_url(user, password, host, database):
     '''
     get_db_url(user=user, password=password, host=host, database='zillow')
@@ -41,8 +31,7 @@ def get_db_url(user, password, host, database):
 ### other functions                                                         ###
 ###############################################################################
 
-# print('get sql')
-@timeifdebug
+@timeargsifdebug
 def get_sql(sql='zillow_sql'):
     '''
     get_sql(sql='zillow_sql')
@@ -158,8 +147,7 @@ def get_sql(sql='zillow_sql'):
     return sqls[sql]
 
 
-# print('wrangle zillow')
-@timeifdebug
+@timeargsifdebug
 def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     '''
     wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False)
@@ -180,10 +168,11 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     return result_df    
 
 
-# print('frame splain')
-def frame_splain(df, title, topx=5, print_out=True):
+@timeifdebug
+def frame_splain(df, title='DATAFRAME', topx=5, maxcols=10, print_out=True):
     df_shape = df.shape
-    max_x = max(topx, df_shape[1])
+    cols = df_shape[0]
+    max_x = min(topx, df_shape[1])
     df_desc = df.describe()
     df_head = df.head(max_x)
     df_info = df.info()
@@ -191,11 +180,6 @@ def frame_splain(df, title, topx=5, print_out=True):
         print(title, 'shape:\n', df_shape, '\n')
         print(title, 'description:\n', df_desc, '\n')
         print(title, 'info:\n', df_info, '\n')
-        print(title, 'head:\n', df_head, '\n')
+        if cols <= maxcols:
+            print(title, 'head:\n', df_head, '\n')
         
-
-
-
-# print('Got acquire')
-
-# if __name__ = '__main__':
