@@ -2,6 +2,8 @@
 ### imports                                                                 ###
 ###############################################################################
 
+print('Getting Acquire', __name__)
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -14,11 +16,13 @@ import pandas as pd
 from env import host, user, password
 
 
+
 ###############################################################################
 ### get db url                                                              ###
 ###############################################################################
 
 
+print('get db url')
 def get_db_url(user, password, host, database):
     '''
     get_db_url(user=user, password=password, host=host, database='zillow')
@@ -31,6 +35,7 @@ def get_db_url(user, password, host, database):
 ### other functions                                                         ###
 ###############################################################################
 
+print('get sql')
 def get_sql(sql='zillow_sql'):
     '''
     get_sql(sql='zillow_sql')
@@ -40,7 +45,6 @@ def get_sql(sql='zillow_sql'):
 
     Pass an SQL key, returns the sql statement.
     '''
-
     sqls = {
         # test_sql for quick test of environment
         'test_sql': '',
@@ -147,6 +151,7 @@ def get_sql(sql='zillow_sql'):
     return sqls[sql]
 
 
+print('wrangle zillow')
 def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     '''
     wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False)
@@ -159,7 +164,6 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
 
     *** Requires user, password, and host from env.py ***
     '''
-
     get_database = db
     zillow_url = get_db_url(user=user, password=password, host=host, database=get_database)
     use_sql = sql if sql_string else get_sql(sql='zillow_sql')
@@ -168,7 +172,12 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     return result_df    
 
 
+print('frame splain')
 def frame_splain(df, title, topx=5):
     df_shape = df.shape
     df_describe = df.describe()
     df_head = df.head(topx)
+
+
+
+print('Got acquire')

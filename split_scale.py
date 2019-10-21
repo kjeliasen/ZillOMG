@@ -2,6 +2,9 @@
 ### python imports                                                          ###
 ###############################################################################
 
+print('Getting Split_Scale', __name__)
+
+
 import warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
@@ -27,6 +30,7 @@ from prep import get_base_df, get_gross_df, rename_fields
 
 ### Test Train Split ##########################################################
 # train, test = train_test_split(df, train_size = .80, random_state = 123)
+print('split my data xy')
 def split_my_data_xy(df, target_column, train_pct=.75, random_state=None):
     X = df.drop([target_column], axis=1)
     y = pd.DataFrame(df[target_column])
@@ -34,12 +38,14 @@ def split_my_data_xy(df, target_column, train_pct=.75, random_state=None):
     return X_train, X_test, y_train, y_test
 
 
+print('split my data')
 def split_my_data(df, train_pct=.75, random_state=None):
     train, test = train_test_split(df, train_size=train_pct, random_state=random_state)
     return train, test
 
 
 ### Transform Data ############################################################
+print('scalem')
 def scalem(scaler, test, train):
     # transform train
     train_scaled = pd.DataFrame(scaler.transform(train), columns=train.columns.values).set_index([train.index.values])
@@ -48,6 +54,7 @@ def scalem(scaler, test, train):
     return train_scaled, test_scaled
 
 
+print('scale inverse')
 def scale_inverse(train_scaled, test_scaled, scaler):
     # If we wanted to return to original values:
     # apply to train
@@ -58,6 +65,7 @@ def scale_inverse(train_scaled, test_scaled, scaler):
 
 
 ### Standard Scaler ###########################################################
+print('standard scaler')
 def standard_scaler(train, test):
     # create object & fit
     scaler = StandardScaler(copy=True, with_mean=True, with_std=True).fit(train)
@@ -67,6 +75,7 @@ def standard_scaler(train, test):
 
 
 ### Uniform Scaler ############################################################
+print('uniform scaler')
 def uniform_scaler(train, test):
     # create scaler object and fit to train
     scaler = QuantileTransformer(n_quantiles=100, output_distribution='uniform', random_state=123, copy=True).fit(train)
@@ -76,6 +85,7 @@ def uniform_scaler(train, test):
 
 
 ### Gaussian (Normal) Scaler ##################################################
+print('guassian scaler')
 def gaussian_scaler(train, test):
     # create scaler object using yeo-johnson method and fit to train
     scaler = PowerTransformer(method='yeo-johnson', standardize=False, copy=True).fit(train)
@@ -86,6 +96,7 @@ def gaussian_scaler(train, test):
 
 
 ### MinMax Scaler #############################################################
+print('min max scaler')
 def min_max_scaler(train, test):
     # create scaler object and fit to train
     scaler = MinMaxScaler(copy=True, feature_range=(0,1)).fit(train)
@@ -96,6 +107,7 @@ def min_max_scaler(train, test):
 
 
 ### Robust Scaler #############################################################
+print('iqr robust scaler')
 def iqr_robust_scaler(train, test):
     # create scaler object and fit to train
     scaler = RobustScaler(quantile_range=(25.0,75.0), copy=True, with_centering=True, with_scaling=True).fit(train)
@@ -108,58 +120,82 @@ def iqr_robust_scaler(train, test):
 ### project-specific scaling functions                                      ###
 ###############################################################################
 
-
+print('zy df')
 def xy_df(dataframe, y_column):
     '''
-    FUNCTION
-    RETURNS:
-    '''
+    xy_df(dataframe, y_column)
+    RETURNS X_df, y_df
 
+    Pass in one dataframe of observed data and the name of the target column. Returns dataframe of all columns except the target column and dataframe of just the target column.
+
+    If y_column is a list, more than one column can be separated.
+    '''
     X_df = dataframe.drop([y_column], axis=1)
     y_df = pd.DataFrame(dataframe[y_column])
     return X_df, y_df
 
 
-def split_scaled_dfs(target_df=get_base_df(), y_column='taxvaluedollarcnt', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
+print('set context')
+def set_context(target_df, y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
     '''
-    scale_df(target_df=get_base_df(), y_column='taxvaluedollarcnt', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
-    RETURNS: X_train, X_train_scaled, X_test, X_test_scaled, y_train, y_train_scaled, y_test, y_test_scaled, scaler
+    set_context(target_df=get_base_df(), y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
+    RETURNS: context object with heaping piles of context enclosed
 
     scaler_fn must be a function
     dummy val added to train and test to allow for later feature selection testing
 
     '''
-    df_dict = {}
-    train, test = split_my_data(df=target_df, random_state=randomer)
-    df_dict['scaler'], train_scaled, test_scaled = scaler_fn(train=train, test=test)
-    train['dummy_val']=1
-    train_scaled['dummy_val']=1
-    df_dict['X_train'], df_dict['y_train'] = xy_df(dataframe=train, y_column=y_column)
-    df_dict['X_test'], df_dict['y_test'] = xy_df(dataframe=test, y_column=y_column)
-    df_dict['X_train_scaled'], df_dict['y_train_scaled'] = xy_df(dataframe=train_scaled, y_column=y_column)
-    df_dict['X_test_scaled'], df_dict['y_test_scaled'] = xy_df(dataframe=test_scaled, y_column=y_column)
-    return df_dict
+    context = object()
+    context.y_column = y_column
+    context.train, context.test = split_my_data(df=target_df, random_state=randomer)
+    context.scaler, context.train_scaled, context.test_scaled = scaler_fn(train=train, test=test)
+    context.train['dummy_val']=1
+    context.train_scaled['dummy_val']=1
+    context.X_train, context.y_train = xy_df(dataframe=context.train, y_column=y_column)
+    context.X_test, context.y_test = xy_df(dataframe=context.test, y_column=y_column)
+    context.X_train_scaled, context.y_train_scaled = xy_df(dataframe=context.train_scaled, y_column=y_column)
+    context.X_test_scaled, context.y_test_scaled = xy_df(dataframe=context.test_scaled, y_column=y_column)
+    return context
 
 
-def pairplot_train(X, y):
+print('df join xy')
+def df_join_xy(X, y):
+    '''
+    df_join_xy(X, y)
+    RETURNS dataframe X.join(y)
+
+    Allows reconfigurations of X and y based on train or test and scaled or unscaled    
+    '''
+    return X.join(y)
+
+
+print('pairplot train')
+def pairplot_train(dataframe, show_now=True):
     '''
     FUNCTION
     RETURNS:
     '''
-    train_plot = X.join(y)
-    sns.pairplot(train_plot)
-    plt.show()
+    plot = sns.pairplot(dataframe)
+    if show_now:
+        plt.show()
+    else:
+        return plot
 
 
-def heatmap_train(X, y):
+print('heatmap train')
+def heatmap_train(dataframe, show_now=True):
     '''
     FUNCTION
     RETURNS:
     '''
-    train_plot = X.join(y)
     plt.figure(figsize=(7,5))
-    cor = train_plot.corr()
-    sns.heatmap(cor, annot=True, cmap=plt.cm.RdBu_r)
-    plt.show()
+    cor = dataframe.corr()
+    plot = sns.heatmap(cor, annot=True, cmap=plt.cm.RdBu_r)
+    if show_now:
+        plt.show()
+    else:
+        return plot
 
 
+
+print('Got split_scale')
