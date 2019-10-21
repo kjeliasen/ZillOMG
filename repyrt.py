@@ -12,7 +12,7 @@ from sklearn.metrics import mean_squared_error, r2_score, explained_variance_sco
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
-from debug import local_settings, timeifdebug, timeargsifdebug
+from debug import local_settings, timeifdebug, timeargsifdebug, frame_splain
 
 from acquire import wrangle_zillow, get_sql, get_db_url, frame_splain
 from prep import edit_gross_df, edit_prep_df, rename_fields
@@ -20,7 +20,7 @@ from split_scale import xy_df, set_context, df_join_xy, pairplot_train, heatmap_
 from split_scale import split_my_data_xy, split_my_data
 from split_scale import scalem, scale_inverse
 from split_scale import standard_scaler, uniform_scaler, gaussian_scaler, min_max_scaler, iqr_robust_scaler
-
+from feature_selection import get_fit_summary, get_ols_model, lasso_cv_coef
 
 
 
@@ -35,3 +35,7 @@ def prep_data(acquire_df):
     return edit_prep_df(gross_df)
 
 
+@timeifdebug
+def find_context(context_df, scaler_fn=standard_scaler):
+    context = set_context(context_df=context_df, scaler_fn=scaler_fn)
+    return context

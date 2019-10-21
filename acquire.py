@@ -12,7 +12,7 @@ import pandas as pd
 ###############################################################################
 
 from env import host, user, password
-from debug import local_settings, timeifdebug, timeargsifdebug
+from debug import local_settings, timeifdebug, timeargsifdebug, frame_splain
 
 ###############################################################################
 ### get db url                                                              ###
@@ -164,22 +164,7 @@ def wrangle_zillow(db='zillow', sql='zillow_sql', sql_string=False):
     zillow_url = get_db_url(user=user, password=password, host=host, database=get_database)
     use_sql = sql if sql_string else get_sql(sql='zillow_sql')
     result_df = pd.read_sql(use_sql, zillow_url)
-
+    frame_splain(result_df, topx=5, maxcols=10)
     return result_df    
 
 
-@timeifdebug
-def frame_splain(df, title='DATAFRAME', topx=5, maxcols=10, print_out=True):
-    df_shape = df.shape
-    cols = df_shape[0]
-    max_x = min(topx, df_shape[1])
-    df_desc = df.describe()
-    df_head = df.head(max_x)
-    df_info = df.info()
-    if print_out:
-        print(title, 'shape:\n', df_shape, '\n')
-        print(title, 'description:\n', df_desc, '\n')
-        print(title, 'info:\n', df_info, '\n')
-        if cols <= maxcols:
-            print(title, 'head:\n', df_head, '\n')
-        

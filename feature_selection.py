@@ -2,8 +2,6 @@
 ### python imports                                                          ###
 ###############################################################################
 
-print('Getting Feature Selection', __name__)
-
 import warnings
 warnings.filterwarnings("ignore")
 import pandas as pd
@@ -14,34 +12,63 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTransformer, RobustScaler, MinMaxScaler
 from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
+from sklearn.linear_model import LassoCV
 
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
-
 
 ###############################################################################
 ### local imports                                                           ###
 ###############################################################################
 
-from debug import local_settings, timeifdebug, timeargsifdebug
-# from split_scale import wrangle_zillow, get_sql, get_db_url
-# from split_scale import get_base_df, get_gross_df, rename_fields
-# from split_scale import xy_df, set_context, df_join_xy, pairplot_train, heatmap_train
-# from split_scale import split_my_data_xy, split_my_data
-# from split_scale import scalem, scale_inverse
-# from split_scale import standard_scaler, uniform_scaler, gaussian_scaler, min_max_scaler, iqr_robust_scaler
+from debug import local_settings, timeifdebug, timeargsifdebug, frame_splain
 
 
 
+@timeifdebug
+def get_fit_summary(model):
+    # fit the model:
+    fit = model.fit()
+    return fit.summary()
+    
+    
+@timeifdebug
+def get_ols_model(X_train, y_train, train):
+#    model = ols('y_train ~ X_train', data=train).fit()
+    model = ols('y_train ~ X_train').fit()
+    yhat = ols_model.predict(y_train)
+    return model, yhat
 
-#OLS object to analyze features
 
-# ols_model = sm.OLS(y_train,X_train)
-# fit = ols_model.fit()
-# fit.summary()
+@timeifdebug
+def lasso_cv_coef(X_train, y_train, plotit=True, summarize=True):
+    '''
+    lasso_cv_coef(X_train, y_train, plotit=True, summarize=True)
+    plotit produces plot at runtime
+    summarize returns printed summary
+    RETURNS: model, alpha, score, coef, yhat    
+    '''
+    model = LassoCV().fit(X_train, y_train)
+    alpha = model.alpha_
+    score = model.score(X_train, y_train)
+    coef = pd.Series(model.coef_, index = X_train.columns)
+    yhat = model.predict(X_train)
+    if summarize:
+        imp_coef = coef.sort_values()
+        vars_kept = sum(coef != 0)
+        vars_elim = sum(coef == 0)
+        print("Best alpha using built-in LassoCV: %f" %model.alpha_)
+        print("Best score using built-in LassoCV: %f" %model.score(X_train,y_train))
+        print("Lasso picked " + str(sum(coef != 0)) + 
+              " variables and eliminated the other " +  
+              str(sum(coef == 0)) + " variables")
+        print(pd.DataFrame(coef))
+    if plotit:
+        imp_coef = coef.sort_values()
+        matplotlib.rcParams['figure.figsize'] = (4.0, 5.0)
+        imp_coef.plot(kind = "barh")
+        plt.title("Feature importance using Lasso Model")
+        plt.plot()
+    return model, yhat, alpha, score, coef
 
-#ols_model = ols('y_train ~ X_train',data=train).fit()
-#train['yhat'] = ols_model.predict(y_train)
-
-
-print('Got Feature Selection')
+# print('Got Feature Selection')

@@ -20,9 +20,7 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTran
 ### local imports                                                           ###
 ###############################################################################
 
-from debug import local_settings, timeifdebug, timeargsifdebug
-# from prep import wrangle_zillow, get_sql, get_db_url
-# from prep import get_base_df, get_gross_df, rename_fields
+from debug import local_settings, timeifdebug, timeargsifdebug, frame_splain
 
 
 ###############################################################################
@@ -136,34 +134,10 @@ def xy_df(dataframe, y_column):
     If y_column is a list, more than one column can be separated.
     '''
     X_df = dataframe.drop([y_column], axis=1)
+    frame_splain(X_df, title='X')
     y_df = pd.DataFrame(dataframe[y_column])
+    frame_splain(y_df, title='y')
     return X_df, y_df
-
-
-class Context(): pass
-
-
-@timeifdebug
-def set_context(target_df, y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
-    '''
-    set_context(target_df=get_base_df(), y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
-    RETURNS: context object with heaping piles of context enclosed
-
-    scaler_fn must be a function
-    dummy val added to train and test to allow for later feature selection testing
-
-    '''
-    context = Context()
-    context.y_column = y_column
-    context.train, context.test = split_my_data(df=target_df, random_state=randomer)
-    context.scaler, context.train_scaled, context.test_scaled = scaler_fn(train=context.train, test=context.test)
-    context.train['dummy_val']=1
-    context.train_scaled['dummy_val']=1
-    context.X_train, context.y_train = xy_df(dataframe=context.train, y_column=y_column)
-    context.X_test, context.y_test = xy_df(dataframe=context.test, y_column=y_column)
-    context.X_train_scaled, context.y_train_scaled = xy_df(dataframe=context.train_scaled, y_column=y_column)
-    context.X_test_scaled, context.y_test_scaled = xy_df(dataframe=context.test_scaled, y_column=y_column)
-    return context
 
 
 @timeifdebug
@@ -174,7 +148,9 @@ def df_join_xy(X, y):
 
     Allows reconfigurations of X and y based on train or test and scaled or unscaled    
     '''
-    return X.join(y)
+    join_df = X.join(y)
+    frame_splain(join_df, 'join df')
+    return join_df
 
 
 @timeifdebug
@@ -203,6 +179,32 @@ def heatmap_train(dataframe, show_now=True):
         plt.show()
     else:
         return plot
+
+
+class Context(): pass
+
+
+@timeifdebug
+def set_context(context_df, y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler):
+    '''
+    set_context(context_df=get_base_df(), y_column='taxable_value', train_pct=.75, randomer=None, scaler_fn=standard_scaler)
+    RETURNS: context object with heaping piles of context enclosed
+
+    scaler_fn must be a function
+    dummy val added to train and test to allow for later feature selection testing
+
+    '''
+    context = Context()
+    context.y_column = y_column
+    context.train, context.test = split_my_data(df=context_df, random_state=randomer)
+    context.scaler, context.train_scaled, context.test_scaled = scaler_fn(train=context.train, test=context.test)
+    context.train['dummy_val']=1
+    context.train_scaled['dummy_val']=1
+    context.X_train, context.y_train = xy_df(dataframe=context.train, y_column=y_column)
+    context.X_test, context.y_test = xy_df(dataframe=context.test, y_column=y_column)
+    context.X_train_scaled, context.y_train_scaled = xy_df(dataframe=context.train_scaled, y_column=y_column)
+    context.X_test_scaled, context.y_test_scaled = xy_df(dataframe=context.test_scaled, y_column=y_column)
+    return context
 
 
 
